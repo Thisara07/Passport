@@ -55,8 +55,29 @@
 
             <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
                 
-                <!-- Left Side: User Profile / Auth -->
-                <div class="d-none d-lg-flex align-items-center justify-content-start" style="flex: 1; gap: 15px;">
+                <!-- Left Side: Language, Chatbot & User Profile / Auth -->
+                <div class="d-none d-lg-flex align-items-center justify-content-start" style="flex: 1; gap: 10px;">
+                    <!-- Language Selector -->
+                    <div class="dropdown">
+                        <form method="GET" action="{{ request()->url() }}">
+                            @foreach(request()->except('lang') as $key => $value)
+                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endforeach
+                            <select name="lang" class="form-select form-select-sm border-0 bg-transparent text-white fw-bold" style="width: auto; cursor: pointer; padding-right: 25px;" onchange="this.form.submit()">
+                                <option value="en" class="text-dark" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>EN</option>
+                                <option value="si" class="text-dark" {{ app()->getLocale() == 'si' ? 'selected' : '' }}>SI</option>
+                                <option value="ta" class="text-dark" {{ app()->getLocale() == 'ta' ? 'selected' : '' }}>TA</option>
+                            </select>
+                        </form>
+                    </div>
+
+                    <!-- Chatbot Button -->
+                    <button id="chatbot-toggle" class="btn btn-sm btn-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; flex-shrink: 0;" title="Open Chatbot">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-primary">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                    </button>
+
                     <!-- Auth Dropdown -->
                     @auth
                         <div class="d-flex align-items-center gap-3 ps-2">
@@ -122,28 +143,8 @@
                     </ul>
                 </div>
 
-                <!-- Right Side Utilities (Lang & Chatbot) -->
-                <div class="d-flex align-items-center justify-content-end" style="flex: 1; gap: 15px;">
-                    <!-- Language Selector -->
-                    <div class="dropdown">
-                        <form method="GET" action="{{ request()->url() }}">
-                            @foreach(request()->except('lang') as $key => $value)
-                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                            @endforeach
-                            <select name="lang" class="form-select form-select-sm border-0 bg-transparent text-white fw-bold" style="width: auto; cursor: pointer; padding-right: 25px;" onchange="this.form.submit()">
-                                <option value="en" class="text-dark" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>EN</option>
-                                <option value="si" class="text-dark" {{ app()->getLocale() == 'si' ? 'selected' : '' }}>SI</option>
-                                <option value="ta" class="text-dark" {{ app()->getLocale() == 'ta' ? 'selected' : '' }}>TA</option>
-                            </select>
-                        </form>
-                    </div>
-
-                    <!-- Chatbot Button -->
-                    <button id="chatbot-toggle" class="btn btn-sm btn-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; flex-shrink: 0;" title="Open Chatbot">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-primary">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                    </button>
+                <!-- Right Side (empty now, elements moved to left) -->
+                <div class="d-none d-lg-flex align-items-center justify-content-end" style="flex: 1;">
                 </div>
             </div>
         </nav>
