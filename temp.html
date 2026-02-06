@@ -1,0 +1,368 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="X04OEaaQzl27X4T8YvwbV5GvEkYurJAVkCgYA7FE">
+
+    <title>Laravel</title>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="http://localhost:8001/css/frontend.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .floating-contact:hover {
+            transform: scale(1.1);
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Main Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="http://localhost:8001">Laravel</a>
+
+                <!-- Search Form -->
+                <form method="GET" action="http://localhost:8001" style="width: 300px;" class="d-flex ms-auto">
+                    <input type="hidden" name="controller" value="search">
+                    <input type="hidden" name="action" value="index">
+                    <input name="q" class="form-control form-control-sm" type="search" placeholder="Search..." value="">
+                    <button class="btn btn-sm btn-dark ms-2" type="submit">Search</button>
+                </form>
+
+                <!-- Language Selector -->
+                <form method="GET" action="http://localhost:8001" style="display: inline;">
+                    <input type="hidden" name="controller" value="index">
+                    <input type="hidden" name="action" value="index">
+                                        <select name="lang" class="form-select form-select-sm ms-3" style="width: 110px;" onchange="console.log('Language changed to: ' + this.value); this.form.submit()">
+                        <option value="en" selected>English</option>
+                        <option value="si" >Sinhala</option>
+                        <option value="ta" >Tamil</option>
+                    </select>
+                </form>
+
+                <!-- Chatbot Button -->
+                <button id="chatbot-toggle" class="ms-3 bg-white rounded-full p-2 hover:bg-gray-100 transition duration-200" style="display: inline-block; border-radius: 50%; width: 35px; height: 35px; text-align: center; cursor: pointer;" title="Open Chatbot">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-blue-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                </button>
+
+                <!-- Profile Icon -->
+                
+                <!-- Mobile toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#secondaryNavbar" aria-controls="secondaryNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Secondary Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary collapse" id="secondaryNavbar">
+            <div class="container">
+                <ul class="navbar-nav m-auto">
+                    <li class="nav-item mx-2"><a class="nav-link" href="http://localhost:8001">Home</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="http://localhost:8001/appointment">Appointment</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="http://localhost:8001/application">Application</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="#">Passport</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="#">Payment</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="#">Instructions</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="#">Contact</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="#">Feedback</a></li>
+                    
+                    <!-- Authentication Links -->
+                                                                        <li class="nav-item mx-2">
+                                <a class="nav-link" href="http://localhost:8001/login">Login</a>
+                            </li>
+                        
+                                                    <li class="nav-item mx-2">
+                                <a class="nav-link" href="http://localhost:8001/register">Register</a>
+                            </li>
+                                            
+                    <!-- Admin Dashboard Link -->
+                                    </ul>
+            </div>
+        </nav>
+
+        <!-- Chatbot Side Panel -->
+        <div id="chatbot-panel" style="position: fixed; top: 0; right: -400px; width: 350px; height: 100vh; background-color: white; box-shadow: -2px 0 10px rgba(0,0,0,0.1); z-index: 10000; transition: right 0.3s ease; display: flex; flex-direction: column;">
+            <div style="background-color: #2563eb; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">Passport Assistant</h3>
+                <button id="chatbot-close" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
+            </div>
+            <div style="flex: 1; padding: 15px; overflow-y: auto;">
+                <p>Welcome to the Passport Assistant! How can I help you today?</p>
+                <!-- Chatbot content would go here -->
+            </div>
+        </div>
+
+        <!-- Overlay for when chatbot is open -->
+        <div id="chatbot-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: none;"></div>
+
+        <!-- Floating Contact Icon -->
+        <a href="#" class="floating-contact" title="Contact Support">
+            <i class="fas fa-headset"></i>
+        </a>
+
+        <main class="py-4">
+            <div class="hero bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="hero-content fade-in text-center">
+            <h1 class="display-4 fw-bold mb-4">Welcome to Passport System</h1>
+            <p class="lead fs-4 mb-5">Apply for your passport, book appointments, and manage your documents online with our streamlined digital platform.</p>
+            
+            <!-- Quick Actions -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-10">
+                    <div class="card bg-white text-dark shadow-lg">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Quick Access</h3>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <a href="http://localhost:8001/application" class="btn btn-primary w-100 py-3">
+                                        <i class="fas fa-file-alt fa-2x mb-2"></i><br>
+                                        New Application
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="http://localhost:8001/appointment" class="btn btn-success w-100 py-3">
+                                        <i class="fas fa-calendar-check fa-2x mb-2"></i><br>
+                                        Book Appointment
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="#" class="btn btn-info w-100 py-3">
+                                        <i class="fas fa-search fa-2x mb-2"></i><br>
+                                        Track Status
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <button id="quick-chatbot" class="btn btn-warning w-100 py-3">
+                                        <i class="fas fa-robot fa-2x mb-2"></i><br>
+                                        Need Help?
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+                    <div class="hero-btns d-flex justify-content-center gap-3 flex-wrap">
+                <a class="btn btn-light btn-lg px-4" href="http://localhost:8001/login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+                <a class="btn btn-outline-light btn-lg px-4" href="http://localhost:8001/register">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                </a>
+                <a class="btn btn-dark btn-lg px-4" href="http://localhost:8001/admin/login">
+                    <i class="fas fa-user-shield me-2"></i>Admin Login
+                </a>
+            </div>
+                </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-5">Why Choose Our Passport System?</h2>
+    
+    <div class="stats-grid row row-cols-1 row-cols-md-4 g-4 mb-5">
+        <div class="col">
+            <div class="stat-card fade-in h-100 text-center p-4 bg-white rounded shadow-sm border-start border-4 border-primary">
+                <div class="stat-icon text-primary mb-3">
+                    <i class="fas fa-passport fa-2x"></i>
+                </div>
+                <div class="stat-number h2 text-primary fw-bold">10,000+</div>
+                <div class="stat-label">Passports Issued</div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="stat-card fade-in h-100 text-center p-4 bg-white rounded shadow-sm border-start border-4 border-success" style="animation-delay: 0.1s">
+                <div class="stat-icon text-success mb-3">
+                    <i class="fas fa-check-circle fa-2x"></i>
+                </div>
+                <div class="stat-number h2 text-success fw-bold">98%</div>
+                <div class="stat-label">Approval Rate</div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="stat-card fade-in h-100 text-center p-4 bg-white rounded shadow-sm border-start border-4 border-info" style="animation-delay: 0.2s">
+                <div class="stat-icon text-info mb-3">
+                    <i class="fas fa-clock fa-2x"></i>
+                </div>
+                <div class="stat-number h2 text-info fw-bold">7 Days</div>
+                <div class="stat-label">Average Processing</div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="stat-card fade-in h-100 text-center p-4 bg-white rounded shadow-sm border-start border-4 border-warning" style="animation-delay: 0.3s">
+                <div class="stat-icon text-warning mb-3">
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+                <div class="stat-number h2 text-warning fw-bold">50,000+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+        </div>
+    </div>
+    <!-- Services Section -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card fade-in h-100 border-0 shadow-sm" style="animation-delay: 0.4s">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                        <i class="fas fa-file-alt fa-2x"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Easy Application</h3>
+                    <p class="card-text">Submit your passport application online with our easy-to-use form. Upload required documents digitally and track your progress in real-time.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card fade-in h-100 border-0 shadow-sm" style="animation-delay: 0.5s">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                        <i class="fas fa-calendar-check fa-2x"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Appointment Scheduling</h3>
+                    <p class="card-text">Schedule your passport appointment at your nearest office branch. Choose from available time slots and get instant confirmation.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card fade-in h-100 border-0 shadow-sm" style="animation-delay: 0.6s">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                        <i class="fas fa-shipping-fast fa-2x"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Fast Delivery</h3>
+                    <p class="card-text">Get your passport delivered to your doorstep. Track your application status online and receive notifications at every step.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Features -->
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Additional Features</h2>
+        <div class="row g-4">
+            <div class="col-md-3 text-center">
+                <div class="p-3">
+                    <i class="fas fa-language fa-3x text-primary mb-3"></i>
+                    <h4>Multi-language Support</h4>
+                    <p>Available in English, Sinhala, and Tamil</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="p-3">
+                    <i class="fas fa-robot fa-3x text-success mb-3"></i>
+                    <h4>AI Chatbot Assistant</h4>
+                    <p>24/7 automated support for your queries</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="p-3">
+                    <i class="fas fa-mobile-alt fa-3x text-info mb-3"></i>
+                    <h4>Mobile Friendly</h4>
+                    <p>Access from any device, anywhere</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="p-3">
+                    <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                    <h4>Secure & Reliable</h4>
+                    <p>Your data is protected with advanced security</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        </main>
+    </div>
+    
+    <footer class="footer bg-dark text-white mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Laravel</h5>
+                    <p>Your trusted partner for passport services.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2026 Passport System. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chatbot JavaScript -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotPanel = document.getElementById('chatbot-panel');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotOverlay = document.getElementById('chatbot-overlay');
+
+        // Function to open chatbot
+        function openChatbot() {
+            chatbotPanel.style.right = '0';
+            chatbotOverlay.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Function to close chatbot
+        function closeChatbot() {
+            chatbotPanel.style.right = '-400px';
+            chatbotOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        }
+
+        // Event listeners
+        if(chatbotToggle) chatbotToggle.addEventListener('click', openChatbot);
+        if(chatbotClose) chatbotClose.addEventListener('click', closeChatbot);
+        if(chatbotOverlay) chatbotOverlay.addEventListener('click', closeChatbot);
+    });
+    </script>
+</body>
+</html>
