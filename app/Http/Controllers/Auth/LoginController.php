@@ -62,7 +62,7 @@ class LoginController extends Controller
             
             Auth::guard('web')->login($applicant);
             Session::put('user_role', 'applicant');
-            return redirect()->route('dashboard');
+            return redirect('/');
         }
         
         // If neither, login failed
