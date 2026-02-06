@@ -152,12 +152,25 @@
         <!-- Chatbot Side Panel -->
         <div id="chatbot-panel" style="position: fixed; top: 0; right: -400px; width: 350px; height: 100vh; background-color: white; box-shadow: -2px 0 10px rgba(0,0,0,0.1); z-index: 10000; transition: right 0.3s ease; display: flex; flex-direction: column;">
             <div style="background-color: #2563eb; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0;">{{ __('messages.passport_assistant') }}</h3>
-                <button id="chatbot-close" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
+                <h3 style="margin: 0; font-size: 1.25rem;">{{ __('messages.passport_assistant') }}</h3>
+                <button id="chatbot-close" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1;">&times;</button>
             </div>
-            <div style="flex: 1; padding: 15px; overflow-y: auto;">
-                <p>{{ __('messages.welcome_passport_assistant') }}</p>
-                <!-- Chatbot content would go here -->
+            
+            <!-- Chat Messages Area -->
+            <div id="chatbot-messages" style="flex: 1; padding: 15px; overflow-y: auto; background-color: #f8fafc; display: flex; flex-direction: column; gap: 10px;">
+                <div class="bot-message" style="background-color: #dbeafe; color: #1e40af; padding: 10px 15px; border-radius: 15px 15px 15px 2px; align-self: flex-start; max-width: 85%; font-size: 0.95rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    {{ __('messages.welcome_passport_assistant') }}
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div style="padding: 15px; border-top: 1px solid #e2e8f0; background: white;">
+                <div class="input-group">
+                    <input type="text" id="chatbot-input" class="form-control" placeholder="Type your message..." style="border-radius: 20px 0 0 20px; border-right: none;">
+                    <button class="btn btn-primary" id="chatbot-send" style="border-radius: 0 20px 20px 0; padding-left: 20px; padding-right: 20px;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -224,6 +237,9 @@
         const chatbotPanel = document.getElementById('chatbot-panel');
         const chatbotClose = document.getElementById('chatbot-close');
         const chatbotOverlay = document.getElementById('chatbot-overlay');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSend = document.getElementById('chatbot-send');
+        const chatbotMessages = document.getElementById('chatbot-messages');
 
         // Function to open chatbot
         function openChatbot() {
@@ -239,10 +255,98 @@
             document.body.style.overflow = 'auto'; // Re-enable scrolling
         }
 
+        // Function to add message to chat
+        function addMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.style.padding = '10px 15px';
+            msgDiv.style.borderRadius = '15px';
+            msgDiv.style.maxWidth = '85%';
+            msgDiv.style.fontSize = '0.95rem';
+            msgDiv.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+            msgDiv.style.marginBottom = '5px';
+
+            if (sender === 'user') {
+                msgDiv.style.backgroundColor = '#2563eb';
+                msgDiv.style.color = 'white';
+                msgDiv.style.alignSelf = 'flex-end';
+                msgDiv.style.borderBottomRightRadius = '2px';
+            } else {
+                msgDiv.style.backgroundColor = '#dbeafe';
+                msgDiv.style.color = '#1e40af';
+                msgDiv.style.alignSelf = 'flex-start';
+                msgDiv.style.borderBottomLeftRadius = '2px';
+            }
+
+            msgDiv.textContent = text;
+            chatbotMessages.appendChild(msgDiv);
+            
+            // Auto scroll to bottom
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Function to send message to backend
+        function sendMessage() {
+            const message = chatbotInput.value.trim();
+            if (!message) return;
+
+            // Add user message to UI
+            addMessage('user', message);
+            chatbotInput.value = '';
+
+            // Add thinking indicator
+            const thinkingId = 'thinking-' + Date.now();
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.id = thinkingId;
+            thinkingDiv.style.padding = '10px 15px';
+            thinkingDiv.style.backgroundColor = '#f1f5f9';
+            thinkingDiv.style.color = '#64748b';
+            thinkingDiv.style.borderRadius = '15px 15px 15px 2px';
+            thinkingDiv.style.alignSelf = 'flex-start';
+            thinkingDiv.style.fontSize = '0.9rem';
+            thinkingDiv.textContent = 'Assistant is typing...';
+            chatbotMessages.appendChild(thinkingDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+            // Send AJAX request
+            fetch('{{ route("chatbot.send") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove thinking indicator
+                const indicator = document.getElementById(thinkingId);
+                if (indicator) indicator.remove();
+                
+                // Add bot response to UI
+                addMessage('bot', data.reply);
+            })
+            .catch(error => {
+                // Remove thinking indicator
+                const indicator = document.getElementById(thinkingId);
+                if (indicator) indicator.remove();
+                
+                addMessage('bot', 'Sorry, I encountered an error. Please try again.');
+                console.error('Chatbot Error:', error);
+            });
+        }
+
         // Event listeners
         if(chatbotToggle) chatbotToggle.addEventListener('click', openChatbot);
         if(chatbotClose) chatbotClose.addEventListener('click', closeChatbot);
         if(chatbotOverlay) chatbotOverlay.addEventListener('click', closeChatbot);
+        if(chatbotSend) chatbotSend.addEventListener('click', sendMessage);
+        if(chatbotInput) {
+            chatbotInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
     });
     </script>
 </body>

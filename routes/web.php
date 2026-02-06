@@ -35,6 +35,9 @@ Route::get('/about', function () {
 Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'index'])->name('feedback');
 Route::post('/feedback', [App\Http\Controllers\FeedbackController::class, 'store'])->name('feedback.store');
 
+// Chatbot route
+Route::post('/chatbot/send', [App\Http\Controllers\ChatbotController::class, 'send'])->name('chatbot.send');
+
 // Test route to check database connection
 Route::get('/test-db', function () {
     try {
